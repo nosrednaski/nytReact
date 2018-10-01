@@ -1,18 +1,18 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { Col, Row, Container } from "../../components/Grid";
+import { Col, Row } from "../../components/Grid";
 import Jumbotron from "../../components/Jumbotron";
 import API from "../../utils/API";
 import DeleteBtn from "../../components/DeleteBtn";
 import { List, ListItem } from "../../components/List";
-class Detail extends Component {
+import moment from "moment";
+
+class Saved extends Component {
   state = {
     articles: [],
     title: "",
     url: "",
-    date: "",
-    snippet: ""
-  };
+    date: ""
+   };
 
   componentDidMount() {
     this.loadArticles();
@@ -21,7 +21,7 @@ class Detail extends Component {
   loadArticles = () => {
     API.getArticles()
       .then(res =>
-        this.setState({ articles: res.data, title: "", url: "", date: "", snippet: "" })
+        this.setState({ articles: res.data, title: "", url: "", date: "", snippet: ""})
       )
       .catch(err => console.log(err));
   };
@@ -34,24 +34,25 @@ class Detail extends Component {
 
   render() {
     return (
-      <Container fluid>
+      
         <Row>
-          <Col size="md-12">
+          <Col>
             <Jumbotron>
               <h1>
-                
+                Saved Articles
               </h1>
             </Jumbotron>
             {this.state.articles.length ? (
               <List>
                 {this.state.articles.map(article => (
-                  <ListItem key={article._id}>
-                    <Link to={"/articles/" + article._id}>
-                      <strong>
-                        {article.title} by {article.author}
-                      </strong>
-                    </Link>
-                    <DeleteBtn onClick={() => this.deleteBook(article._id)} />
+                 <ListItem key={article._id}>
+                  <em>{article.title}</em>
+                  <ul id="resultUl">
+                    <li>{moment(article.date).format("MMMM Do, YYYY")}</li>
+                    <li>{article.snippet}</li>
+                    <li><a href={article.url}>Read Full Article</a></li>
+                  </ul>
+                    <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
                   </ListItem>
                 ))}
               </List>
@@ -59,29 +60,13 @@ class Detail extends Component {
               <h3>No Results to Display</h3>
             )}
           </Col>
-          
-        </Row>
-        <Row>
-          <Col size="md-10 md-offset-1">
-            <article>
-              <h1>Synopsis</h1>
-              <p>
-                
-              </p>
-            </article>
-          </Col>
-        </Row>
-        <Row>
-          <Col size="md-2">
-            <Link to="/">← Back to Authors</Link>
-          </Col>
-        </Row>
-      </Container>
+       </Row>
+      
     );
   }
 }
 
-export default Detail;
+export default Saved;
 
 
 

@@ -1,10 +1,8 @@
 import React from "react";
+import "./jumbotron.css";
 
 const Jumbotron = ({ children }) => (
-  <div
-    style={{ height: 300, clear: "both", paddingTop: 120, textAlign: "center" }}
-    className="jumbotron"
-  >
+  <div className="jumbotron">
     {children}
   </div>
 );

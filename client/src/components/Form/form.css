@@ -1,0 +1,22 @@
+form {
+    display: grid;
+    justify-content: center;
+}
+
+input {
+    padding: 15px;
+    margin: 1.5em;
+    width: 450px;
+    border-radius: 4px;
+    box-shadow: none;
+    border: 1px solid #555;
+}
+
+.submit-btn {
+   margin: 30px 0; 
+}
+
+.submit-btn:hover {
+    background: black;
+    color: white;
+}

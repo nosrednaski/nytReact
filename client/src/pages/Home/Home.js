@@ -2,15 +2,17 @@ import React, { Component } from "react";
 import SaveBtn from "../../components/SaveBtn";
 import Jumbotron from "../../components/Jumbotron";
 import API from "../../utils/API";
-import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../../components/Grid";
 import { List, ListItem } from "../../components/List";
 import { Input, FormBtn } from "../../components/Form";
+import Saved from "../Saved";
 import axios from "axios";
 import moment from "moment";
+
 class Home extends Component {
   state = {
     articles: [],
+    id: "",
     title: "",
     url: "",
     date: "",
@@ -24,11 +26,7 @@ class Home extends Component {
     
   }
 
-  saveArticle = id => {
-    API.saveArticle(id) 
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
-  };
+ 
 
   handleInputChange = event => {
     const { name, value } = event.target;
@@ -40,11 +38,36 @@ class Home extends Component {
   handleFormSubmit = event => {
     event.preventDefault();
     this.queryNYT()
-    .then(data => {console.log(data);
+    .then(data => {
     this.setState({ articles: data });
     console.log(this.state.articles);
     }
     )};
+
+  handleClick = (event, i) => {
+    console.log(i);
+    API.saveArticle({
+      id: this.state.articles[i]._id,
+      title: this.state.articles[i].headline.main,
+      url: this.state.articles[i].web_url,
+      date: moment(this.state.articles[i].pub_date).format("MM/DD/YYYY"),
+      snippet: this.state.articles[i].snippet
+    })
+    .then(
+      res => {
+        console.log(res);
+        // this.loadArticles();
+      })
+    .catch(err => console.log(err));
+  };
+
+  // loadArticles = () => {
+  //   API.getArticles()
+  //     .then(res =>
+  //       this.setState({ articles: res.data, title: "", url: "", date: ""})
+  //     )
+  //     .catch(err => console.log(err));
+  // };
 
   queryNYT = () => {
     let query = this.state.queryTerm.trim();
@@ -64,14 +87,13 @@ class Home extends Component {
     });
    }
 
+ 
 
- //https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=c876dbe19d0f4ebd9da7a7d8709cb049&q=toes&begin_date=1999&end_date=2000
-//
   render() {
     return (
-      <Container fluid>
+      <Container>
         <Row>
-          <Col size="md-6">
+          <Col>
             <Jumbotron>
               <h1>Search the historic NYT for any topic back to 1850</h1>
             </Jumbotron>
@@ -102,20 +124,23 @@ class Home extends Component {
               </FormBtn>
             </form>
           </Col>
-          <Col size="md-6 sm-12">
+          <Col>
             <Jumbotron>
               <h1>Results</h1>
             </Jumbotron>
             {this.state.articles.length ? (
               <List>
-                {this.state.articles.map(article => (
+                {this.state.articles.map((article, i) => (
                   <ListItem key={article._id}>
-                    <Link to={"/articles/" + article._id}>
-                      <strong>
-                        {article.headline.main} from {moment(article.pub_date).format("YYYY")}
-                      </strong>
-                    </Link>
-                    <SaveBtn onClick={() => this.saveArticle(article._id)} />
+                     <em>{article.headline.main}</em>
+                      <ul id="resultUl">
+                        <li>{moment(article.pub_date).format("MMMM Do, YYYY")}</li>
+                        <li>{article.snippet}</li>
+                        <li><a href={article.web_url}>Read Full Article</a></li>
+                      </ul>
+                    <SaveBtn onClick={
+                      (e)=>{this.handleClick(e, i)}
+                      } />
                   </ListItem>
                 ))}
               </List>
@@ -123,8 +148,10 @@ class Home extends Component {
               <h3>No Results to Display</h3>
             )}
           </Col>
+          <Saved></Saved>
         </Row>
       </Container>
+
     );
   }
 }
