@@ -18,8 +18,8 @@ export default {
     return axios.post("/api/articles", articleData);
   },
 
-  // 
-  // queryNYT: function(query, start, end) {
+  
+  // queryNYT: function(search, beg, ed) {
   //   let query = query.trim();
   //   let start = start.trim() + "0101";
   //   let end = end.trim() + "1231";
